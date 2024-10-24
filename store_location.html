@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Locations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .stores h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .stores {
+            padding: 20px;
+        }
+
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 0 auto;
+            max-width: 1440px;
+        }
+
+        .store-item {
+            text-align: left;
+            transition: transform 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .store-item img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease-in-out;
+            object-fit: cover;
+        }
+
+        .store-item h3 {
+            font-size: 1.5rem;
+            margin: 15px 0 10px;
+        }
+
+        .store-item p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .store-item a {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #000;
+            text-decoration: none;
+            border-bottom: 1px solid #000;
+            transition: color 0.3s ease;
+        }
+
+        .store-item a:hover {
+            color: #007BFF;
+        }
+
+        .store-item img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Off-canvas modal styles */
+        .offcanvas-modal {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 320px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .offcanvas-modal.active {
+            right: 0;
+            opacity: 1;
+        }
+
+        .offcanvas-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 3px;
+            margin-top: 20px;
+        }
+
+        .offcanvas-content p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .close-modal {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Overlay styles */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content_header {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            width: 100%;
+            position: relative;
+        }
+
+        .content_header::after {
+            content: "";
+            position: absolute;
+            width: 13%;
+            height: 1px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            bottom: 0px;
+            transform: translateX(-40px);
+        }
+
+        .content_header::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            bottom: 0;
+            transform: translateX(2px);
+        }
+
+        svg {
+            display: flex;
+        }
+
+        .store_location {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: -2px;
+        }
+
+        .shop_map_direction {
+            position: absolute;
+            top: 100%;
+            transform: translateY(-80px);
+            color: #fff;
+            background: #000;
+            width: 100%;
+            text-align: center;
+            padding: 13px 0px;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .off_canvas_content_wrapper {
+            position: relative;
+            height: 100%;
+        }
+
+        @media(min-width:768px) {
+            .shop_map_direction {
+                transform: translateY(-65px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="stores">
+        <h2>Visit our stores</h2>
+        <div class="store-grid">
+            <div class="store-item" data-store-name="City store" data-address="123 Green Avenue, Cityville"
+                data-image="store_1.jpg" data-location="https://maps.app.goo.gl/yTc4jXkrXnn48aCZ9">
+                <img src="store_1.jpg" alt="City Store">
+                <h3>City store</h3>
+                <div class="store_location"> <span><svg fill="#000000" version="1.1" id="Capa_1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px"
+                            height="15px" viewBox="0 0 425.963 425.963" xml:space="preserve">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M213.285,0h-0.608C139.114,0,79.268,59.826,79.268,133.361c0,48.202,21.952,111.817,65.246,189.081 c32.098,57.281,64.646,101.152,64.972,101.588c0.906,1.217,2.334,1.934,3.847,1.934c0.043,0,0.087,0,0.13-0.002 c1.561-0.043,3.002-0.842,3.868-2.143c0.321-0.486,32.637-49.287,64.517-108.976c43.03-80.563,64.848-141.624,64.848-181.482 C346.693,59.825,286.846,0,213.285,0z M274.865,136.62c0,34.124-27.761,61.884-61.885,61.884 c-34.123,0-61.884-27.761-61.884-61.884s27.761-61.884,61.884-61.884C247.104,74.736,274.865,102.497,274.865,136.62z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg></span> 123 Green Avenue, Cityville</div>
+                <a href="#" class="view-details">View details</a>
+                <div class="store_aditionoal_information" style="display:none;">
+                    <h4>Store Hours</h4>
+                    <p>Monday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Tuesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Wednesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Sunday Closed</p>
+                </div>
+            </div>
+            <div class="store-item" data-store-name="Flagship store" data-address="456 Earth Street, Townsville"
+                data-image="store_1.jpg">
+                <img src="store_1.jpg" alt="Flagship Store">
+                <h3>Flagship store</h3>
+                <div class="store_location"> <span><svg fill="#000000" version="1.1" id="Capa_1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px"
+                            height="15px" viewBox="0 0 425.963 425.963" xml:space="preserve">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M213.285,0h-0.608C139.114,0,79.268,59.826,79.268,133.361c0,48.202,21.952,111.817,65.246,189.081 c32.098,57.281,64.646,101.152,64.972,101.588c0.906,1.217,2.334,1.934,3.847,1.934c0.043,0,0.087,0,0.13-0.002 c1.561-0.043,3.002-0.842,3.868-2.143c0.321-0.486,32.637-49.287,64.517-108.976c43.03-80.563,64.848-141.624,64.848-181.482 C346.693,59.825,286.846,0,213.285,0z M274.865,136.62c0,34.124-27.761,61.884-61.885,61.884 c-34.123,0-61.884-27.761-61.884-61.884s27.761-61.884,61.884-61.884C247.104,74.736,274.865,102.497,274.865,136.62z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg></span> 123 Green Avenue, Cityville</div>
+                <a href="#" class="view-details">View details</a>
+                <div class="store_aditionoal_information" style="display:none;">
+                    <h4>Store Hours</h4>
+                    <p>Monday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Tuesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Wednesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Sunday Closed</p>
+                </div>
+            </div>
+            <div class="store-item" data-store-name="GreenWear Collective" data-address="789 Eco Lane, Natureville"
+                data-image="store_1.jpg">
+                <img src="store_1.jpg" alt="GreenWear Collective">
+                <h3>GreenWear Collective</h3>
+                <div class="store_location"> <span><svg fill="#000000" version="1.1" id="Capa_1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px"
+                            height="15px" viewBox="0 0 425.963 425.963" xml:space="preserve">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M213.285,0h-0.608C139.114,0,79.268,59.826,79.268,133.361c0,48.202,21.952,111.817,65.246,189.081 c32.098,57.281,64.646,101.152,64.972,101.588c0.906,1.217,2.334,1.934,3.847,1.934c0.043,0,0.087,0,0.13-0.002 c1.561-0.043,3.002-0.842,3.868-2.143c0.321-0.486,32.637-49.287,64.517-108.976c43.03-80.563,64.848-141.624,64.848-181.482 C346.693,59.825,286.846,0,213.285,0z M274.865,136.62c0,34.124-27.761,61.884-61.885,61.884 c-34.123,0-61.884-27.761-61.884-61.884s27.761-61.884,61.884-61.884C247.104,74.736,274.865,102.497,274.865,136.62z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg></span> 123 Green Avenue, Cityville</div>
+                <a href="#" class="view-details">View details</a>
+                <div class="store_aditionoal_information" style="display:none;">
+                    <h4>Store Hours</h4>
+                    <p>Monday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Tuesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Wednesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Sunday Closed</p>
+                </div>
+            </div>
+            <div class="store-item" data-store-name="Conscious store" data-address="987 Sustainability Avenue, Eco City"
+                data-image="store_1.jpg">
+                <img src="store_1.jpg" alt="Conscious Store">
+                <h3>Conscious store</h3>
+                <div class="store_location"> <span><svg fill="#000000" version="1.1" id="Capa_1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px"
+                            height="15px" viewBox="0 0 425.963 425.963" xml:space="preserve">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M213.285,0h-0.608C139.114,0,79.268,59.826,79.268,133.361c0,48.202,21.952,111.817,65.246,189.081 c32.098,57.281,64.646,101.152,64.972,101.588c0.906,1.217,2.334,1.934,3.847,1.934c0.043,0,0.087,0,0.13-0.002 c1.561-0.043,3.002-0.842,3.868-2.143c0.321-0.486,32.637-49.287,64.517-108.976c43.03-80.563,64.848-141.624,64.848-181.482 C346.693,59.825,286.846,0,213.285,0z M274.865,136.62c0,34.124-27.761,61.884-61.885,61.884 c-34.123,0-61.884-27.761-61.884-61.884s27.761-61.884,61.884-61.884C247.104,74.736,274.865,102.497,274.865,136.62z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg></span> 123 Green Avenue, Cityville</div>
+                <a href="#" class="view-details">View details</a>
+                <div class="store_aditionoal_information" style="display:none;">
+                    <h4>Store Hours</h4>
+                    <p>Monday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Tuesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Wednesday 8:00 a.m. to 8:00 p.m.</p>
+                    <p>Sunday Closed</p>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Off-canvas Modal -->
+    <div class="offcanvas-modal" id="offcanvasModal">
+        <div class="off_canvas_content_wrapper">
+            <div class="offcanvas-content">
+                <div class="content_header">
+                    <div class="close-modal">&times;</div>
+                    <h3 id="modal-store-name"></h3>
+                </div>
+                <img id="modal-image" src="" alt="Store Image">
+                <div class="store_location"> <span><svg fill="#000000" version="1.1" id="Capa_1"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px"
+                            height="15px" viewBox="0 0 425.963 425.963" xml:space="preserve">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <g>
+                                    <path
+                                        d="M213.285,0h-0.608C139.114,0,79.268,59.826,79.268,133.361c0,48.202,21.952,111.817,65.246,189.081 c32.098,57.281,64.646,101.152,64.972,101.588c0.906,1.217,2.334,1.934,3.847,1.934c0.043,0,0.087,0,0.13-0.002 c1.561-0.043,3.002-0.842,3.868-2.143c0.321-0.486,32.637-49.287,64.517-108.976c43.03-80.563,64.848-141.624,64.848-181.482 C346.693,59.825,286.846,0,213.285,0z M274.865,136.62c0,34.124-27.761,61.884-61.885,61.884 c-34.123,0-61.884-27.761-61.884-61.884s27.761-61.884,61.884-61.884C247.104,74.736,274.865,102.497,274.865,136.62z">
+                                    </path>
+                                </g>
+                            </g>
+                        </svg></span>
+                    <p id="modal-address"></p>
+                </div>
+                <a href="#" target="_blank" class="shop_map_direction">Get Direction <span><svg version="1.1" id="Icons"
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                            viewBox="0 0 32 32" xml:space="preserve" width="20px" height="20px" fill="#fff">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <style type="text/css">
+                                    .st0 {
+                                        fill: none;
+                                        stroke: #ffffff;
+                                        stroke-width: 2;
+                                        stroke-linecap: round;
+                                        stroke-linejoin: round;
+                                        stroke-miterlimit: 10;
+                                    }
+                                </style>
+                                <path
+                                    d="M29,2.9c0-0.1,0-0.2,0-0.3c0,0,0-0.1,0-0.1c0-0.1-0.1-0.2-0.2-0.2c0,0,0,0,0-0.1c0,0,0,0,0,0c0,0,0,0,0,0 c-0.1-0.1-0.2-0.1-0.3-0.2c0,0-0.1,0-0.1,0c-0.1,0-0.2,0-0.3-0.1c0,0-0.1,0-0.1,0c-0.1,0-0.2,0-0.3,0c0,0-0.1,0-0.1,0c0,0,0,0,0,0 l-25,12C2.3,14.3,2,14.6,2,14.9s0.1,0.7,0.4,0.9l5.2,3.9l6.8-5.5c0.4-0.3,1.1-0.3,1.4,0.2c0.3,0.4,0.3,1.1-0.2,1.4L9,21.1V29 c0,0.4,0.3,0.8,0.7,0.9C9.8,30,9.9,30,10,30c0.3,0,0.6-0.1,0.8-0.4l3.7-4.8l3.9,2.9c0.2,0.1,0.4,0.2,0.6,0.2c0.1,0,0.2,0,0.3,0 c0.3-0.1,0.5-0.3,0.7-0.6l9-24C29,3.2,29,3.1,29,2.9C29,3,29,3,29,2.9z">
+                                </path>
+                            </g>
+                        </svg></span></a>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const viewDetailsButtons = document.querySelectorAll('.view-details');
+            const modal = document.getElementById('offcanvasModal');
+            const modalImage = document.getElementById('modal-image');
+            const modalStoreName = document.getElementById('modal-store-name');
+            const modalAddress = document.getElementById('modal-address');
+            const closeModal = document.querySelector('.close-modal');
+            const overlay = document.getElementById('overlay');
+            const shopMapDirection = document.querySelector('.shop_map_direction'); // Get the direction button
+
+            viewDetailsButtons.forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    const storeItem = this.closest('.store-item');
+                    const storeName = storeItem.getAttribute('data-store-name');
+                    const address = storeItem.getAttribute('data-address');
+                    const image = storeItem.getAttribute('data-image');
+                    const location = storeItem.getAttribute('data-location');
+
+                    // Check if the additional info exists
+                    const additionalInfoElement = storeItem.querySelector('.store_aditionoal_information');
+                    let additionalInfo = '';
+                    if (additionalInfoElement) {
+                        additionalInfo = additionalInfoElement.innerHTML;
+                    }
+
+                    // Set modal content
+                    modalStoreName.textContent = storeName;
+                    modalAddress.textContent = address;
+                    modalImage.src = image;
+
+                    // Update the "Get Direction" button href if location exists, else remove href attribute
+                    if (location) {
+                        shopMapDirection.href = location; // Set the URL if location is present
+                    } else {
+                        shopMapDirection.removeAttribute('href'); // Remove href if no location available
+                    }
+
+                    // Insert additional information into the modal
+                    const modalContentDiv = document.querySelector('.offcanvas-content');
+                    let existingInfo = modalContentDiv.querySelector('.store_aditionoal_information');
+                    if (existingInfo) {
+                        existingInfo.remove(); // Remove old additional info if exists
+                    }
+                    if (additionalInfo) { // Only add if additional info is present
+                        const additionalInfoDiv = document.createElement('div');
+                        additionalInfoDiv.classList.add('store_aditionoal_information');
+                        additionalInfoDiv.innerHTML = additionalInfo;
+                        modalContentDiv.appendChild(additionalInfoDiv);
+                    }
+
+                    // Show modal and overlay with transition
+                    modal.classList.add('active');
+                    overlay.classList.add('active');
+                });
+            });
+
+            // Close modal and overlay
+            closeModal.addEventListener('click', function () {
+                modal.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+
+            // Close modal and overlay when clicking outside the modal
+            window.addEventListener('click', function (event) {
+                if (event.target === overlay) {
+                    modal.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
